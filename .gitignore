@@ -1,0 +1,22 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Node/Frontend
+node_modules/
+dist/
+build/
+
+# Python/AI
+__pycache__/
+venv/
+*.pyc
+
+# Go
+bin/
+*.exe
+
+# Env Variables (CRITICAL)
+.env
+.env.local
+*.pem
