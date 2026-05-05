@@ -1,0 +1,22 @@
+{
+  "nodes": [
+    {
+      "node_id": "762d1184-91b7-4999-87cd-1e9fe0f1cbc9",
+      "content": "Learn React Hooks",
+      "source": "Telegram"
+    },
+    {
+      "node_id": "535d41b0-9d9d-41ed-a7f2-5f503944d7d7",
+      "content": "React UI Project due Friday",
+      "source": "Calendar"
+    }
+  ],
+  "edges": [
+    {
+      "source_node_id": "762d1184-91b7-4999-87cd-1e9fe0f1cbc9",
+      "target_node_id": "535d41b0-9d9d-41ed-a7f2-5f503944d7d7",
+      "relationship": "BLOCKS",
+      "confidence_score": 0.95
+    }
+  ]
+}
