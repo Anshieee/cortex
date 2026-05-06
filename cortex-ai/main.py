@@ -11,7 +11,7 @@ client = instructor.from_genai(
     mode=instructor.Mode.GENAI_TOOLS,
 )
 
-
+# user text comes from the api request
 def extract_knowledge(user_text: str) -> KnowledgeGraph:
     print(f"Processing text from: {user_text}")
 
@@ -52,6 +52,20 @@ def extract_knowledge(user_text: str) -> KnowledgeGraph:
             print(f"Removed edge: {edge.relationship} from node {edge.source_node_id} to node {edge.target_node_id} because the confidence score {edge.confidence_score} is below the threshold of {THRESHOLD} certainty")
     print(f"Extracted {len(valid_edges)} out of {original_edge_count} possible edges")
     response.edges = valid_edges
+
+    # referential integrity filter (orphan check)
+    valid_node_ids = {node.node_id for node in response.nodes}
+    
+    integrity_checked_edges = []
+    for edge in response.edges:
+        if edge.source_node_id in valid_node_ids and edge.target_node_id in valid_node_ids:
+            integrity_checked_edges.append(edge)
+        else:
+            print(f"Removed edge ({edge.source_node_id} -> {edge.target_node_id}) because it references a non-existent node.")
+
+    response.edges = integrity_checked_edges
+    
+    print(f"final edges after all filters: {len(response.edges)}")
     return response
     
 
@@ -61,7 +75,25 @@ def extract_knowledge(user_text: str) -> KnowledgeGraph:
 if __name__ == "__main__":
     test_input = ("I have a Python test about FastAPI next Friday before I start my project.")
     result_graph = extract_knowledge(test_input)
-    print("Final JSON: ", result_graph.model_dump_json(indent=2))
+    
+    # for example if the ai hallucinated an edge it would look like this
+    from schemas import Edge, EdgeType
+    fake_orphan_edge = Edge(
+        source_node_id=result_graph.nodes[0].node_id, # node_0 -> hallucinated node
+        target_node_id="made_up_hallucinated_node_id_999", # target doesnt exist so it will be removed 
+        relationship=EdgeType.REQUIRES_CONTEXT,
+        confidence_score=0.99
+    )
+    result_graph.edges.append(fake_orphan_edge) # adding the fake edge 
+    
+    # now run the filter manually just to test it
+    valid_ids = {n.node_id for n in result_graph.nodes}
+    if fake_orphan_edge.target_node_id not in valid_ids:
+         print("test passed and the filter successfully caught the orphan.")
+         # removing the fake edge 
+         result_graph.edges.remove(fake_orphan_edge)
+
+    print("Final Output:\n", result_graph.model_dump_json(indent=2))
 
 
 
