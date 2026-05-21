@@ -1,0 +1,9 @@
+* {
+	box-sizing: border-box;
+}
+.app {
+    display: grid;
+    height: 100vh;
+    grid-template-columns: 18rem 1fr;
+    grid-template-rows: 1fr auto;
+}

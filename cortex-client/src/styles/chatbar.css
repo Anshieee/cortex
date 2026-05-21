@@ -1,0 +1,16 @@
+.chatbargroup {
+    padding: 1rem;
+    width: 80%;
+    display: flex;
+    width: 30%;          /* Requires a width less than 100% */
+    margin-left: auto;  /* Pushes container to the left */
+    margin-right: 0;
+    justify-content: center;
+    border: 2px solid black;
+    align-self: flex-end;
+}
+
+.textinput {
+    border-radius: 2px;
+}
+
